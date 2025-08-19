@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ritdha High School — The Gifted Portal</title>
+  <meta name="description" content="พอร์ทัลโรงเรียนฤทธาวิทยาคม (สมมุติ) + เว็บอ่านนิยาย The Gifted พร้อมระบบคูปองโรงเรียน 3 ตอนแรกฟรี ต่อไปปลดล็อกด้วยเหรียญฤทธา" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ====== Theme Tokens ====== */
+    :root{
+      --bg: #0b0c10;
+      --bg-accent: radial-gradient(900px 420px at 15% 10%, rgba(99,102,241,.18), transparent 60%),
+                   radial-gradient(900px 420px at 85% 90%, rgba(16,185,129,.18), transparent 60%);
+      --fg: #eaeef2;
+      --muted:#a7b0b7;
+      --panel:#121319;
+      --elev: rgba(255,255,255,.06);
+      --line:#262a33;
+      --acc:#8b5cf6;
+      --acc-2:#22d3ee;
+      --ring: rgba(139,92,246,.35);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --gold:#f5c84b;
+      --green:#22c55e;
+      --red:#ef4444;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg:#f7f7fb; --fg:#0f1222; --muted:#667085; --panel:#ffffff; --elev: rgba(0,0,0,.04); --line:#ebecef; --shadow: 0 8px 30px rgba(0,0,0,.08); }
+    }
+    .light{ --bg:#f7f7fb; --fg:#0f1222; --muted:#667085; --panel:#ffffff; --elev: rgba(0,0,0,.04); --line:#ebecef; --shadow: 0 8px 30px rgba(0,0,0,.08); }
+
+    html,body{height:100%}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);background-image:var(--bg-accent);color:var(--fg);
+         font-family: ui-sans-serif, system-ui, -apple-system, "Sarabun", "Noto Sans Thai", "Segoe UI", Roboto, Arial;
+         -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;}
+    body.serif{ font-family: "Noto Serif", ui-serif, Georgia, "Times New Roman", serif; }
+
+    a{color:inherit}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+           backdrop-filter: blur(8px); border:1px solid var(--line)}
+
+    /* ====== Micro-interactions for buttons ====== */
+    .btn{position:relative; overflow:hidden; transition: transform .15s ease, box-shadow .2s ease; padding:10px 14px; border-radius:14px; border:1px solid var(--line); background:var(--panel); color:var(--fg); cursor:pointer}
+    .btn::before{content:""; position:absolute; inset:auto -40% 0 -40%; height:0; padding-top:180%; transform:translateY(60%) scale(.6); filter:blur(18px); opacity:0; pointer-events:none; background:radial-gradient(closest-side, rgba(139,92,246,.35), transparent 60%); transition:opacity .25s ease, transform .25s ease}
+    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+    .btn:hover::before{opacity:1; transform:translateY(40%) scale(1)}
+    .btn .ico{display:inline-block; transform:translateX(0); transition:transform .18s ease}
+    .btn:hover .ico{transform:translateX(2px)}
+    .btn.acc{background:linear-gradient(45deg,var(--acc),var(--acc-2));border-color:transparent;color:white}
+    .btn.ghost{background:transparent}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px solid var(--line)}
+
+    /* Dropdown */
+    .menu-wrap{position:relative; display:inline-block}
+    .menu{position:absolute; top:110%; right:0; min-width:220px; padding:8px; border-radius:14px; border:1px solid var(--line);
+          background:var(--panel); box-shadow:var(--shadow); transform-origin: 90% 0%; transform: scale(.96) translateY(-6px); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease}
+    .menu-wrap:hover .menu, .menu-wrap:focus-within .menu{opacity:1; transform: scale(1) translateY(0); pointer-events:auto}
+    .menu a, .menu button{width:100%; text-align:left; border:0; background:transparent; color:var(--fg); padding:10px 12px; border-radius:10px; cursor:pointer}
+    .menu a:hover, .menu button:hover{background:var(--elev)}
+
+    /* ====== Header / Global Nav ====== */
+    .site-nav{position:sticky;top:0;z-index:70;border-bottom:1px solid var(--line)}
+    .nav-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;letter-spacing:-.02em}
+    .brand .dot{width:10px;height:10px;border-radius:999px;background:linear-gradient(45deg,var(--acc),var(--acc-2));box-shadow:0 0 16px var(--ring)}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{padding:8px 12px;border-radius:12px;border:1px solid var(--line);text-decoration:none}
+    .tab.active{background:var(--elev)}
+
+    /* ====== Sections ====== */
+    .section{display:none}
+    .section.active{display:block}
+
+    /* ====== HOME (เว็บโรงเรียน) ====== */
+    .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+    .hero-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:24px;padding:48px 20px}
+    @media (max-width: 900px){ .hero-inner{grid-template-columns:1fr; padding:34px 16px; } }
+    .hero h1{margin:10px 0 12px;font-size:clamp(28px,6vw,56px);letter-spacing:-.02em;line-height:1.06}
+    .slogan{margin:0;color:var(--muted)}
+    .hero-visual{position:relative;aspect-ratio: 4/3;border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+    .hero-visual img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+    .hero-visual::after{content:"";position:absolute;inset:0;background:radial-gradient(160% 70% at 80% 10%, transparent, rgba(0,0,0,.35));}
+
+    .home-grid{max-width:1180px;margin:0 auto;padding:18px 20px;display:grid;grid-template-columns:2fr 1fr;gap:18px}
+    @media (max-width: 1000px){ .home-grid{grid-template-columns:1fr} }
+    .card{border-radius:16px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);padding:16px}
+    .card h3{margin:0 0 8px}
+    .list{display:grid;gap:10px}
+    .list .row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:12px;border:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01))}
+
+    /* ====== Reader ====== */
+    .app{display:grid;grid-template-columns:310px 1fr;min-height:70vh;gap:0;border-top:1px solid var(--line)}
+    .sidebar{display:none;flex-direction:column;border-right:1px solid var(--line)}
+    @media (min-width: 1000px){ .sidebar{display:flex} }
+    .sb-top{padding:16px}
+    .title{margin:0;font-weight:800;letter-spacing:-.02em}
+    .subtitle{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .search{margin-top:12px}
+    .input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);outline:none}
+    .input:focus{box-shadow:0 0 0 4px var(--ring)}
+    .toc{padding:10px;overflow:auto;flex:1}
+    .toc button{width:100%;text-align:left;border:0;background:transparent;color:var(--fg);padding:12px;border-radius:12px;cursor:pointer}
+    .toc button:hover{background:var(--elev)}
+    .toc .active{background:linear-gradient(45deg, rgba(139,92,246,.15), rgba(34,211,238,.15))}
+    .sb-bottom{padding:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+
+    .main{display:flex;flex-direction:column;min-width:0}
+    .progress{position:sticky;top:0;height:4px;background:transparent;z-index:50}
+    .progress > div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc-2));width:0%;transition:width .12s linear}
+    .topbar{position:sticky;top:0;z-index:45;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);}
+    .topbar .group{display:flex;gap:8px;align-items:center}
+    .pill{font-size:12px;color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .content-wrap{flex:1;overflow:auto;padding:0 18px 110px}
+    .article{max-width:860px;margin:0 auto}
+    .article h2{margin:28px 0 6px;font-size:clamp(22px,3.2vw,32px);letter-spacing:-.01em}
+    .meta{color:var(--muted);font-size:12px;margin-bottom:14px;display:flex;gap:8px;align-items:center}
+    .body{white-space: pre-wrap; hyphens:auto}
+
+    /* ====== Store / Profile ====== */
+    .store, .profile{max-width:980px;margin:24px auto;padding:0 20px}
+    .pack{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);padding:14px;border-radius:14px}
+    .pack .h{display:flex;align-items:center;justify-content:space-between}
+    .pack .t{color:var(--muted)}
+    .idcard{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:14px;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01))}
+    .avatar{width:100%;aspect-ratio:3/4;border-radius:10px;object-fit:cover;box-shadow:var(--shadow)}
+
+    /* ====== Modals ====== */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:100}
+    .modal.show{display:flex}
+    .dialog{max-width:520px;width:92%;border-radius:16px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);padding:16px}
+
+    /* Mobile bar */
+    .mobile-card{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:12px}
+    .sheet{margin:0 10px 10px;border-radius:16px;max-height:60vh;overflow:auto}
+    .hidden{display:none}
+
+    /* Smooth */
+    html{scroll-behavior:smooth}
+  </style>
+</head>
+<body class="serif">
+  <!-- ====== GLOBAL NAV ====== -->
+  <header class="site-nav glass">
+    <div class="nav-inner">
+      <a class="brand" href="#home"><span class="dot"></span> ฤทธาวิทยาคม</a>
+      <nav class="tabs">
+        <a class="tab" data-tab="home" href="#home">หน้าโรงเรียน</a>
+        <a class="tab" data-tab="read" href="#read">อ่านนิยาย</a>
+        <a class="tab" data-tab="store" href="#store">ซื้อคูปอง</a>
+        <a class="tab" data-tab="profile" href="#profile">บัตรนักเรียน</a>
+        <span class="menu-wrap">
+          <a class="tab" href="javascript:void(0)">เพิ่มเติม ▾</a>
+          <div class="menu" role="menu" aria-label="เพิ่มเติม">
+            <button role="menuitem" id="toggleThemeTop">สว่าง/มืด</button>
+            <button role="menuitem" id="toggleSerifTop">Serif/Sans</button>
+            <button role="menuitem" id="addDemoCoins">รับทุนการศึกษา (เดโม่)</button>
+          </div>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ====== HOME SECTION ====== -->
+  <section id="home" class="section active">
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <span class="badge glass">ประกาศล่าสุด • ภาคเรียนที่ 1</span>
+          <h1>โรงเรียนฤทธาวิทยาคม</h1>
+          <p class="slogan">AD • ASTRA • SAPIENTIAM — สู่ดวงดาวด้วยปัญญา</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:18px">
+            <a href="#read" class="btn acc"><span class="ico">📖</span> เริ่มอ่านนิยาย (3 ตอนฟรี)</a>
+            <a href="#store" class="btn"><span class="ico">💰</span> เติมเหรียญฤทธา</a>
+          </div>
+        </div>
+        <div class="hero-visual glass">
+          <img src="https://images.unsplash.com/photo-1520975682031-dc2ad6b2c57f?q=80&w=1600&auto=format&fit=crop" alt="อาคารเรียน"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-grid">
+      <div class="card">
+        <h3>ข่าวประชาสัมพันธ์</h3>
+        <div class="list">
+          <div class="row"><span>ประกาศรับนักเรียนพลังพิเศษ รุ่นที่ 10</span><a class="btn ghost" href="#read">รายละเอียด</a></div>
+          <div class="row"><span>กิจกรรมปฐมนิเทศ นักเรียนใหม่</span><span class="badge">สัปดาห์หน้า</span></div>
+          <div class="row"><span>ห้องสมุดฤทธา เปิดให้บริการ 24 ชม.</span><a class="btn ghost" href="#read">เข้าห้องสมุด</a></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>ประกาศผลสอบ</h3>
+        <div class="list">
+          <div class="row"><span>วิชาการสังเกตใจขั้นต้น</span><span class="badge">ผ่าน 92%</span></div>
+          <div class="row"><span>วิชาจริยธรรมเชิงพลัง</span><span class="badge">ประกาศพรุ่งนี้</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== READ SECTION ====== -->
+  <section id="read" class="section">
+    <div class="app" id="readerApp">
+      <aside class="sidebar glass">
+        <div class="sb-top">
+          <h1 class="title">The Gifted</h1>
+          <p class="subtitle">อ่านฟรี 3 ตอน • ตอนถัดไปใช้เหรียญฤทธา</p>
+          <div class="search"><input id="searchInput" class="input" placeholder="ค้นหาบทหรือคำ..." /></div>
+        </div>
+        <nav id="toc" class="toc"></nav>
+        <div class="sb-bottom">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="toggleTheme" class="btn">สว่าง/มืด</button>
+            <button id="toggleSerif" class="btn">Serif/Sans</button>
+          </div>
+          <div style="height:10px"></div>
+          <div class="row" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <span>ขนาดตัวอักษร</span>
+            <div style="display:flex; gap:8px">
+              <button id="fzDown" class="btn">A-</button>
+              <button id="fzUp" class="btn">A+</button>
+            </div>
+          </div>
+          <div class="row" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <span>ระยะห่างบรรทัด</span>
+            <div style="display:flex; gap:8px">
+              <button id="lhDown" class="btn">–</button>
+              <button id="lhUp" class="btn">+</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="progress"><div id="progressBar"></div></div>
+        <div class="topbar glass">
+          <div class="group">
+            <button id="prevBtn" class="btn">ก่อนหน้า</button>
+            <button id="nextBtn" class="btn">ถัดไป</button>
+          </div>
+          <div class="pill">อ่าน: <span id="pct">0</span>% • เหรียญ: <span id="coins">0</span> RIT</div>
+        </div>
+        <div id="scrollArea" class="content-wrap">
+          <article class="article">
+            <h2 id="title">—</h2>
+            <div class="meta">
+              <span id="chapterIndex">บทที่ 1</span>
+              <span>•</span>
+              <button id="copyLink" class="btn">คัดลอกลิงก์บทนี้</button>
+            </div>
+            <div id="content" class="body" style="font-size:18px; line-height:1.9"></div>
+            <div style="height:16px"></div>
+            <div style="display:flex;gap:8px">
+              <a class="btn" href="#store">เติมเหรียญ</a>
+              <button id="zenToggle" class="btn">โหมดโฟกัส</button>
+            </div>
+          </article>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ====== STORE SECTION ====== -->
+  <section id="store" class="section">
+    <div class="store">
+      <h2>ร้านค้าโรงเรียน — เหรียญฤทธา (RIT)</h2>
+      <p class="muted">ใช้เหรียญเพื่อปลดล็อกตอนตั้งแต่บทที่ 4 ขึ้นไป (ค่าอ่าน <strong>2 RIT/ตอน</strong>)</p>
+      <div style="display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top:14px">
+        <div class="pack">
+          <div class="h"><strong>แพ็กเล็ก</strong><span>20 RIT</span></div>
+          <div class="t">เหมาะสำหรับลองระบบ • ปลดล็อกได้ ~10 ตอน</div>
+          <button class="btn acc" data-buy="20">ซื้อ 20 RIT</button>
+        </div>
+        <div class="pack">
+          <div class="h"><strong>แพ็กมาตรฐาน</strong><span>60 RIT</span></div>
+          <div class="t">คุ้มกว่า • ปลดล็อกได้ ~30 ตอน</div>
+          <button class="btn acc" data-buy="60">ซื้อ 60 RIT</button>
+        </div>
+        <div class="pack">
+          <div class="h"><strong>ทุนเกียรติยศ</strong><span>200 RIT</span></div>
+          <div class="t">อ่านยาว ๆ แบบสบายใจ</div>
+          <button class="btn acc" data-buy="200">ซื้อ 200 RIT</button>
+        </div>
+      </div>
+      <div style="margin-top:14px; display:flex; gap:8px; align-items:center">
+        <span class="badge">ยอดคงเหลือปัจจุบัน: <strong id="coinsStore">0</strong> RIT</span>
+        <a class="btn" href="#read">กลับไปอ่าน</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PROFILE SECTION ====== -->
+  <section id="profile" class="section">
+    <div class="profile">
+      <h2>บัตรนักเรียน — Ritdha High School</h2>
+      <div class="idcard">
+        <img class="avatar" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=800&auto=format&fit=crop" alt="student"/>
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+            <strong id="studentName">นักเรียนใหม่</strong>
+            <span class="badge">เลขประจำตัว: <span id="studentId">RIT-0001</span></span>
+            <span class="badge">เหรียญ: <span id="coinsProfile">0</span> RIT</span>
+          </div>
+          <div style="height:10px"></div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button id="rename" class="btn">ตั้งชื่อบนบัตร</button>
+            <button id="resetData" class="btn">รีเซ็ตข้อมูลเดโม่</button>
+          </div>
+        </div>
+      </div>
+      <div style="height:14px"></div>
+      <div class="card">
+        <h3>ตอนที่ปลดล็อกแล้ว</h3>
+        <div id="unlockedList" class="list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PAYWALL MODAL ====== -->
+  <div id="paywall" class="modal">
+    <div class="dialog">
+      <h3>ปลดล็อกตอนนี้</h3>
+      <p>ตอนนี้เป็นตอนที่อยู่หลังจาก 3 ตอนแรก ต้องใช้ <strong>2 RIT</strong> เพื่ออ่านต่อ</p>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <button id="unlockNow" class="btn acc">ใช้ 2 RIT ปลดล็อก</button>
+        <a href="#store" class="btn">ไปเติมเหรียญ</a>
+        <button id="cancelUnlock" class="btn ghost">ยกเลิก</button>
+      </div>
+      <div style="margin-top:8px" class="badge">ยอดคงเหลือปัจจุบัน: <span id="coinsModal">0</span> RIT</div>
+    </div>
+  </div>
+
+  <!-- ====== HOVER PREVIEW CARD ====== -->
+  <div id="hoverCard" style="position:fixed; z-index:90; pointer-events:none; max-width:320px; background:var(--panel); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:10px; color:var(--muted); opacity:0; transform:translateY(4px); transition:opacity .12s ease, transform .12s ease"></div>
+
+  <script>
+    // ====== Demo Story Data ======
+    const initialChapters = [
+      { id:"ch-1", title:"บทที่ 1: เปิดภาคเรียนใหม่", slug:"chapter-1", content:`เช้าวันเปิดภาคเรียนที่โรงเรียนฤทธาวิทยาคม
+
+“พลัง” ไม่ได้เริ่มจากแฟลชไลท์สาดสว่าง แต่มักเริ่มจากคำถามเล็ก ๆ ที่เราไม่กล้าถามใคร
+
+เสียงกริ่งแรกดังเหมือนเครื่องหมายเปิดฉาก บางคนเข้าห้องเรียน บางคนเข้าหาตัวเอง` },
+      { id:"ch-2", title:"บทที่ 2: เสียงในกำแพง", slug:"chapter-2", content:`คืนแรกของหอพัก—ผนังบาง ๆ กระซิบชื่อที่ไม่คุ้นหู
+
+เสียงนั้นเรียกใคร และทำไมถึงรู้จักความลับของเรา?
+
+เราตัดสินใจแนบหู ฟังให้ชัดขึ้น แล้วได้ยินคำว่า “เลือก”` },
+      { id:"ch-3", title:"บทที่ 3: ห้องเรียนที่ไม่มีชื่อ", slug:"chapter-3", content:`ห้องเรียนหมายเลขศูนย์—ไม่มีในแผนผัง แต่ทุกคนเคยเดินผ่าน
+
+วันนี้ ประตูมันเปิดรออยู่แล้ว
+
+บนกระดาน เขียนด้วยชอล์กว่า: “การบ้านแรกของนักเรียนพลังพิเศษ คือการสังเกตใจตัวเอง”` },
+      { id:"ch-4", title:"บทที่ 4: ห้องปกครอง", slug:"chapter-4", content:`ประตูเหล็กทึบที่ชั้นใต้ดินมีป้ายว่า 'ฝ่ายปกครอง' แต่ข้างในกลับมีแสงอุ่นๆ และรูปถ่ายนักเรียนรุ่นก่อนๆ เต็มผนัง` },
+      { id:"ch-5", title:"บทที่ 5: คาบทดลอง", slug:"chapter-5", content:`อาจารย์ให้การบ้านหนึ่งข้อ: 'ทดลองกับใจตัวเองหนึ่งครั้ง แล้วกลับมารายงานผล' ทั้งห้องเงียบกริบ` }
+    ];
+
+    // ====== Helpers ======
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const save = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked (iframe/sandbox/private mode) — fail gracefully */ } };
+    const load = (k, fallback) => { try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch { return fallback; } };
+
+    // ====== Elements ======
+    const tabs = $$('.tab');
+    const sections = $$('.section');
+    const coinsElTop = $('#coins');
+    const coinsStoreEl = $('#coinsStore');
+    const coinsProfileEl = $('#coinsProfile');
+    const coinsModalEl = $('#coinsModal');
+
+    // Reader els
+    const tocEl = $('#toc');
+    const titleEl = $('#title');
+    const contentEl = $('#content');
+    const pctEl = $('#pct');
+    const progressBar = $('#progressBar');
+    const scrollArea = $('#scrollArea');
+    const chapterIndexEl = $('#chapterIndex');
+    const searchInput = $('#searchInput');
+    const copyLinkBtn = $('#copyLink');
+    const prevBtn = $('#prevBtn');
+    const nextBtn = $('#nextBtn');
+    const zenToggle = $('#zenToggle');
+
+    // toggles / settings
+    const toggleThemeBtn = $('#toggleTheme');
+    const toggleSerifBtn = $('#toggleSerif');
+    const toggleThemeTop = $('#toggleThemeTop');
+    const toggleSerifTop = $('#toggleSerifTop');
+
+    // store
+    const storeButtons = $$('[data-buy]');
+
+    // profile
+    const studentNameEl = $('#studentName');
+    const studentIdEl = $('#studentId');
+    const unlockedListEl = $('#unlockedList');
+    const renameBtn = $('#rename');
+    const resetBtn = $('#resetData');
+    const addDemoCoinsBtn = $('#addDemoCoins');
+
+    // paywall
+    const paywall = $('#paywall');
+    const unlockNowBtn = $('#unlockNow');
+    const cancelUnlockBtn = $('#cancelUnlock');
+
+    // ====== State ======
+    let chapters = [...initialChapters];
+    let activeId = load('gifted.active', chapters[0].id);
+    let fontSize = load('gifted.fontSize', 18);
+    let lineHeight = load('gifted.lh', 1.9);
+    let isLight = load('gifted.light', false);
+    let serif = load('gifted.serif', true);
+
+    let coins = load('gifted.coins', 0);
+    let unlocked = new Set(load('gifted.unlocked', ['ch-1','ch-2','ch-3'])); // 3 ตอนแรกฟรี
+    let studentName = load('gifted.name', 'นักเรียนใหม่');
+    let studentId = load('gifted.id', 'RIT-0001');
+
+    if(isLight) document.body.classList.add('light');
+    if(!serif) document.body.classList.remove('serif');
+    contentEl.style.fontSize = fontSize + 'px';
+    contentEl.style.lineHeight = lineHeight;
+
+    function setCoins(v){ coins = Math.max(0, v|0); save('gifted.coins', coins); syncCoins(); }
+    function syncCoins(){ coinsElTop?.textContent = coins; coinsStoreEl?.textContent = coins; coinsProfileEl?.textContent = coins; coinsModalEl?.textContent = coins; }
+    syncCoins();
+
+    function syncProfile(){ studentNameEl.textContent = studentName; studentIdEl.textContent = studentId; renderUnlockedList(); }
+    function renderUnlockedList(){
+      const arr = chapters.filter(c=> unlocked.has(c.id));
+      unlockedListEl.innerHTML = arr.map(c=>`<div class="row"><span>${c.title}</span><a class="btn ghost" href="#read" data-jump="${c.id}">อ่าน</a></div>`).join('') || '<div class="row">ยังไม่มีข้อมูล</div>';
+      $$('[data-jump]')?.forEach(b=> b.addEventListener('click', (e)=>{ e.preventDefault(); selectChapter(e.currentTarget.getAttribute('data-jump'), true); location.hash = '#read'; }));
+    }
+    syncProfile();
+
+    // ====== Router ======
+    function showTab(name){
+      sections.forEach(s=> s.classList.toggle('active', s.id===name));
+      tabs.forEach(t=> t.classList.toggle('active', t.dataset.tab===name));
+      if(name==='read') requestAnimationFrame(updateProgress);
+    }
+    function route(){
+      const hash = location.hash.replace('#','') || 'home';
+      showTab(hash);
+    }
+    window.addEventListener('hashchange', route); route();
+    // Fallback: ทำให้แท็บสลับหน้าได้ทันทีแม้ hashchange จะไม่ยิง (บางสภาพแวดล้อม)
+    tabs.forEach(t=> t.addEventListener('click', (e)=>{ const target = t.getAttribute('data-tab'); if(target){ showTab(target); } }));
+    // อัปเดตยอดเหรียญเมื่อเปลี่ยนหน้า
+    window.addEventListener('hashchange', syncCoins);
+
+    // ====== TOC / Reader ======
+    function renderTOC(){
+      tocEl.innerHTML = '';
+      const q = (searchInput?.value||'').toLowerCase().trim();
+      const items = q ? chapters.filter(c=> c.title.toLowerCase().includes(q) || c.content.toLowerCase().includes(q)) : chapters;
+      items.forEach((c, idx)=>{
+        const btn = document.createElement('button');
+        btn.className = (c.id===activeId)?'active':'';
+        btn.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><span style="opacity:.6">${idx+1}.</span><span>${c.title}</span></div>`;
+        btn.addEventListener('click', ()=> selectChapter(c.id, true));
+        // preview hover
+        btn.addEventListener('mouseenter', (e)=> showHoverCard(e, c));
+        btn.addEventListener('mousemove', positionHoverCard);
+        btn.addEventListener('mouseleave', hideHoverCard);
+        tocEl.appendChild(btn);
+      });
+    }
+
+    function renderArticle(){
+      const idx = chapters.findIndex(c=>c.id===activeId);
+      const chapter = chapters[idx];
+      titleEl.textContent = chapter.title;
+      chapterIndexEl.textContent = `บทที่ ${idx+1}`;
+      contentEl.innerHTML = chapter.content;
+      save('gifted.active', activeId);
+      scrollArea.scrollTo({top:0, behavior:'instant'});
+      updateProgress();
+    }
+
+    // ====== Paywall Logic ======
+    const PRICE = 2; // RIT per chapter after 3 free
+    function maybePaywall(targetId){
+      const idx = chapters.findIndex(c=> c.id === targetId);
+      if(idx <= 2) return true; // free
+      if(unlocked.has(targetId)) return true; // already unlocked
+      // need to unlock
+      coinsModalEl.textContent = coins;
+      paywall.classList.add('show');
+      unlockNowBtn.onclick = ()=>{
+        if(coins < PRICE){ alert('เหรียญไม่พอ กรุณาไปที่ร้านค้า'); return; }
+        setCoins(coins - PRICE);
+        unlocked.add(targetId);
+        save('gifted.unlocked', Array.from(unlocked));
+        paywall.classList.remove('show');
+        selectChapter(targetId, true);
+      };
+      cancelUnlockBtn.onclick = ()=> paywall.classList.remove('show');
+      return false;
+    }
+
+    function selectChapter(id, fromUser=false){
+      if(!maybePaywall(id)) return; // show modal if needed
+      activeId = id;
+      renderTOC(); renderArticle();
+      if(fromUser){
+        titleEl.style.transition='background 400ms';
+        titleEl.style.background='linear-gradient(90deg, rgba(139,92,246,.18), rgba(34,211,238,.18))';
+        setTimeout(()=> titleEl.style.background='transparent', 420);
+      }
+    }
+
+    function updateProgress(){
+      const sc = scrollArea.scrollTop;
+      const max = scrollArea.scrollHeight - scrollArea.clientHeight;
+      const pct = Math.max(0, Math.min(100, Math.round((sc / Math.max(1,max)) * 100)));
+      progressBar.style.width = pct + '%';
+      pctEl.textContent = pct.toString();
+    }
+
+    // Hover card
+    const hoverCard = $('#hoverCard');
+    function showHoverCard(e, chapter){
+      const txt = chapter.content.replace(/<[^>]+>/g,'').trim();
+      hoverCard.innerHTML = `<strong style="color:var(--fg)">${chapter.title}</strong><div style="height:6px"></div>${txt.slice(0,140)}${txt.length>140?'…':''}`;
+      hoverCard.style.opacity = 1; positionHoverCard(e);
+    }
+    function positionHoverCard(e){ hoverCard.style.left = (e.clientX+14)+'px'; hoverCard.style.top = (e.clientY+14)+'px'; hoverCard.style.transform='translateY(0)'; }
+    function hideHoverCard(){ hoverCard.style.opacity = 0; hoverCard.style.transform='translateY(4px)'; }
+
+    // Search
+    searchInput?.addEventListener('input', ()=> renderTOC());
+
+    // Nav buttons
+    prevBtn?.addEventListener('click', ()=>{
+      const i = chapters.findIndex(c=>c.id===activeId); if(i>0) selectChapter(chapters[i-1].id, true);
+    });
+    nextBtn?.addEventListener('click', ()=>{
+      const i = chapters.findIndex(c=>c.id===activeId); if(i<chapters.length-1) selectChapter(chapters[i+1].id, true);
+    });
+    scrollArea?.addEventListener('scroll', updateProgress);
+
+    // Settings
+    function toggleTheme(){ document.body.classList.toggle('light'); isLight = document.body.classList.contains('light'); save('gifted.light', isLight); }
+    function toggleSerif(){ document.body.classList.toggle('serif'); serif = document.body.classList.contains('serif'); save('gifted.serif', serif); }
+    toggleThemeBtn?.addEventListener('click', toggleTheme);
+    toggleSerifBtn?.addEventListener('click', toggleSerif);
+    toggleThemeTop?.addEventListener('click', toggleTheme);
+    toggleSerifTop?.addEventListener('click', toggleSerif);
+
+    const fzUpBtn = $('#fzUp'); const fzDownBtn = $('#fzDown'); const lhUpBtn = $('#lhUp'); const lhDownBtn = $('#lhDown');
+    function setFontSize(delta){ fontSize = Math.max(14, Math.min(28, Math.round((fontSize+delta)*10)/10)); contentEl.style.fontSize = fontSize + 'px'; save('gifted.fontSize', fontSize); }
+    function setLineHeight(delta){ lineHeight = Math.max(1.4, Math.min(2.4, Math.round((lineHeight+delta)*10)/10)); contentEl.style.lineHeight = lineHeight; save('gifted.lh', lineHeight); }
+    fzUpBtn?.addEventListener('click', ()=> setFontSize(1));
+    fzDownBtn?.addEventListener('click', ()=> setFontSize(-1));
+    lhUpBtn?.addEventListener('click', ()=> setLineHeight(.1));
+    lhDownBtn?.addEventListener('click', ()=> setLineHeight(-.1));
+
+    // Zen mode
+    zenToggle?.addEventListener('click', ()=>{
+      document.querySelector('.site-nav').classList.toggle('hidden');
+      $('#readerApp')?.classList.toggle('glass');
+    });
+
+    // Store buying (demo) — ใช้ event delegation เผื่อ DOM ถูกรีเฟรชใหม่
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-buy]');
+      if(!btn) return;
+      const amt = parseInt(btn.getAttribute('data-buy'));
+      setCoins(coins + amt);
+      alert('ได้รับ '+amt+' RIT');
+    });
+    addDemoCoinsBtn?.addEventListener('click', ()=> { setCoins(coins + 10); alert('รับทุนการศึกษา +10 RIT'); });
+    addDemoCoinsBtn?.addEventListener('click', ()=> { setCoins(coins + 10); alert('รับทุนการศึกษา +10 RIT'); });
+
+    // Profile
+    renameBtn?.addEventListener('click', ()=>{ const n = prompt('กรอกชื่อที่ต้องการแสดงบนบัตร', studentName); if(n){ studentName = n.trim(); save('gifted.name', studentName); syncProfile(); } });
+    resetBtn?.addEventListener('click', ()=>{
+      if(!confirm('รีเซ็ตข้อมูลเดโม่ทั้งหมด?')) return;
+      ['gifted.active','gifted.fontSize','gifted.lh','gifted.light','gifted.serif','gifted.coins','gifted.unlocked','gifted.name','gifted.id'].forEach(localStorage.removeItem.bind(localStorage));
+      location.reload();
+    });
+
+    // Clipboard
+    copyLinkBtn?.addEventListener('click', ()=>{ if(navigator?.clipboard?.writeText){ navigator.clipboard.writeText(location.href).then(()=>{ copyLinkBtn.textContent='คัดลอกแล้ว!'; setTimeout(()=> copyLinkBtn.textContent='คัดลอกลิงก์บทนี้', 1200); }).catch(()=>{}); } else { try { const ta=document.createElement('textarea'); ta.value=location.href; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); } catch {} } }); copyLinkBtn.textContent='คัดลอกแล้ว!'; setTimeout(()=> copyLinkBtn.textContent='คัดลอกลิงก์บทนี้', 1200); });
+
+    // ====== Init ======
+    const hash = location.hash.replace('#','');
+    if(hash){ const found = chapters.find(c => c.slug === hash || c.id === hash); if(found) activeId = found.id; }
+    renderTOC(); selectChapter(activeId);
+  </script>
+</body>
+</html>
