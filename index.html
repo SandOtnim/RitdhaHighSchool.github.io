@@ -44,6 +44,46 @@
     mix-blend-mode: overlay;
   }
 
+
+  /* ============ PHOTO GALLERY ============ */
+  .photo-gallery-section { padding: 80px 24px; }
+  .photo-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    gap: 8px;
+  }
+  .pg-item {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .pg-item.pg-wide { grid-column: span 2; }
+  .pg-item::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(6,13,31,0.80) 0%, transparent 60%);
+    transition: opacity .3s;
+  }
+  .pg-item:hover::before { opacity: 0.4; }
+  .pg-item:hover { transform: scale(1.02); transition: transform .4s; }
+  .pg-caption {
+    position: absolute;
+    bottom: 14px; left: 14px; right: 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ivory);
+    opacity: 0.85;
+    z-index: 2;
+  }
+  @media (max-width: 768px) {
+    .photo-gallery-grid { grid-template-columns: repeat(2,1fr); }
+    .pg-item.pg-wide { grid-column: span 2; }
+  }
+
   /* ============ NAV ============ */
   nav.topbar {
     position: fixed; top: 0; left: 0; right: 0;
@@ -187,7 +227,7 @@
     content: '';
     position: absolute;
     inset: -4%;
-    background-image: url('https://i.postimg.cc/NjnyQkH2/sandotnim-A-prestigious-142-year-old-Thai-royal-boarding-scho-5fa0f8b8-4982-4886-88fc-42e41ed51dde-1.png');
+    background-image: url('img/hero.png');
     background-size: cover;
     background-position: center 52%;
     background-repeat: no-repeat;
@@ -552,9 +592,10 @@
     display: flex; align-items: center; justify-content: center;
     text-align: center;
     background:
-      radial-gradient(ellipse at center top, rgba(155,122,200,0.18), transparent 60%),
-      radial-gradient(ellipse at bottom, rgba(201,169,97,0.1), transparent 60%),
-      linear-gradient(180deg, #06081a 0%, #0a1738 50%, #06081a 100%);
+      radial-gradient(ellipse at center top, rgba(155,122,200,0.28), transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(201,169,97,0.15), transparent 60%),
+      linear-gradient(180deg, rgba(6,8,26,0.88) 0%, rgba(10,23,56,0.82) 50%, rgba(6,8,26,0.92) 100%),
+      url('img/novel-library.png') center/cover no-repeat;
     padding: 100px 24px;
     position: relative;
     overflow: hidden;
@@ -1180,6 +1221,8 @@
   .act-card {
     height: 260px;
     background: linear-gradient(135deg, #122352 0%, #0a1838 100%);
+    background-size: cover;
+    background-position: center;
     border: 1px solid rgba(201,169,97,0.25);
     position: relative;
     overflow: hidden;
@@ -1187,13 +1230,16 @@
     align-items: flex-end;
     padding: 22px;
     cursor: pointer;
+    transition: transform .3s, box-shadow .3s;
   }
+  .act-card:hover { transform: scale(1.02); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
   .act-card::before {
     content: '';
     position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 30% 20%, rgba(201,169,97,0.18), transparent 60%);
-    opacity: .6;
+    background: linear-gradient(to top, rgba(6,13,31,0.90) 0%, rgba(6,13,31,0.45) 50%, rgba(6,13,31,0.15) 100%);
+    z-index: 1;
   }
+  .act-card > div { position: relative; z-index: 2; }
   .act-card h4 {
     font-family: 'Noto Serif Thai';
     font-size: 20px;
@@ -2237,6 +2283,9 @@
     padding: 150px 24px 80px;
     text-align: center;
     position: relative;
+    background:
+      linear-gradient(180deg, rgba(6,13,31,0.85) 0%, rgba(10,24,56,0.78) 50%, rgba(6,13,31,0.9) 100%),
+      url('img/colonnade.png') center/cover no-repeat;
   }
   .gifted-hero .sigil {
     font-family: 'Cinzel';
@@ -2753,6 +2802,42 @@
       </div>
     </section>
 
+
+    <!-- ============ PHOTO GALLERY ============ -->
+    <section class="photo-gallery-section">
+      <div class="container">
+        <div class="sec-tag">CAMPUS LIFE</div>
+        <h2 class="sec-title">ภาพบรรยากาศโรงเรียน</h2>
+        <p class="sec-sub">A glimpse into life at Riddhawittiyakom</p>
+        <div class="photo-gallery-grid">
+          <div class="pg-item pg-wide" style="background-image:url('img/entrance.png');">
+            <div class="pg-caption">ทางเข้าหลัก · Grand Entrance</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/history-courtyard.png');">
+            <div class="pg-caption">ลานไม้ใหญ่ · The Ancient Courtyard</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/library-hall.png');">
+            <div class="pg-caption">ห้องสมุดเก่า · The Reading Room</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/canteen.png');">
+            <div class="pg-caption">โรงอาหาร · School Canteen</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/courtyard-main.png');">
+            <div class="pg-caption">อาคารหลัก · Main Building</div>
+          </div>
+          <div class="pg-item pg-wide" style="background-image:url('img/study-room.png');">
+            <div class="pg-caption">ห้องเรียน Gifted · The Gifted Classroom</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/study-cafe.png');">
+            <div class="pg-caption">The Reading Room Café</div>
+          </div>
+          <div class="pg-item" style="background-image:url('img/campus-aerial.png');">
+            <div class="pg-caption">วิทยาเขต · Campus Overview</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ FEATURED NOVEL BANNER ============ -->
     <section class="novel-promo">
       <div class="container">
@@ -2795,7 +2880,7 @@
 
   <!-- ============ HISTORY ============ -->
   <div class="page" id="page-history">
-    <section style="padding-top:150px;">
+    <section style="padding-top:150px; background: linear-gradient(180deg, rgba(6,13,31,0) 0%, rgba(6,13,31,0) 100%), url('img/history-lake.png') center 30%/cover no-repeat fixed;">
       <div class="container">
         <div class="sec-tag">CHRONICLE</div>
         <h2 class="sec-title">ประวัติโรงเรียน</h2>
@@ -2966,15 +3051,15 @@
         <h2 class="sec-title">กิจกรรมโรงเรียน</h2>
         <p class="sec-sub">Moments from the halls of Riddhawittiyakom</p>
         <div class="act-grid">
-          <div class="act-card"><div><div class="date">FEB · 2026</div><h4>งานวันสถาปนา ๑๔๒ ปี</h4></div></div>
-          <div class="act-card"><div><div class="date">MAR · 2026</div><h4>RWK Olympiad การแข่งขันวิชาการ</h4></div></div>
-          <div class="act-card"><div><div class="date">APR · 2026</div><h4>Idol Audition รับสมัครห้อง ๓</h4></div></div>
-          <div class="act-card"><div><div class="date">MAY · 2026</div><h4>Architecture Exhibition</h4></div></div>
-          <div class="act-card"><div><div class="date">JUN · 2026</div><h4>Robot Combat ห้อง ๕</h4></div></div>
-          <div class="act-card"><div><div class="date">JUL · 2026</div><h4>กีฬาสี คณะฤทธา-วิทยาคม</h4></div></div>
-          <div class="act-card"><div><div class="date">AUG · 2026</div><h4>Botanic Garden Tour ห้อง ๑๐</h4></div></div>
-          <div class="act-card"><div><div class="date">SEP · 2026</div><h4>Film Festival · RWK Cinema</h4></div></div>
-          <div class="act-card"><div><div class="date">OCT · 2026</div><h4>ค่ายดาราศาสตร์บนหอดูดาว</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/history-courtyard.png\');"><div><div class="date">FEB · 2026</div><h4>งานวันสถาปนา ๑๔๒ ปี</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/study-room.png\');"><div><div class="date">MAR · 2026</div><h4>RWK Olympiad การแข่งขันวิชาการ</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/colonnade.png\');"><div><div class="date">APR · 2026</div><h4>Idol Audition รับสมัครห้อง ๓</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/campus-aerial.png\');"><div><div class="date">MAY · 2026</div><h4>Architecture Exhibition</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/study-cafe.png\');"><div><div class="date">JUN · 2026</div><h4>Robot Combat ห้อง ๕</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/entrance.png\');"><div><div class="date">JUL · 2026</div><h4>กีฬาสี คณะฤทธา-วิทยาคม</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/history-courtyard.png\');"><div><div class="date">AUG · 2026</div><h4>Botanic Garden Tour ห้อง ๑๐</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/library-hall.png\');"><div><div class="date">SEP · 2026</div><h4>Film Festival · RWK Cinema</h4></div></div>
+          <div class="act-card" style="background-image:url(\'img/courtyard-main.png\');"><div><div class="date">OCT · 2026</div><h4>ค่ายดาราศาสตร์บนหอดูดาว</h4></div></div>
         </div>
       </div>
     </section>
