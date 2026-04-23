@@ -178,17 +178,41 @@
     align-items: center; justify-content: center;
     text-align: center;
     padding: 120px 24px 60px;
-    background:
-      radial-gradient(ellipse at center, rgba(201,169,97,0.12) 0%, transparent 60%),
-      linear-gradient(180deg, #060d1f 0%, #0a1838 70%, #122352 100%);
+    background: linear-gradient(180deg, #060d1f 0%, #0a1838 70%, #122352 100%);
     overflow: hidden;
+    isolation: isolate;
   }
+  /* the hero image (behind everything · slow ken-burns zoom) */
   .hero::before {
     content: '';
+    position: absolute;
+    inset: -4%;
+    background-image: url('https://i.postimg.cc/NjnyQkH2/sandotnim-A-prestigious-142-year-old-Thai-royal-boarding-scho-5fa0f8b8-4982-4886-88fc-42e41ed51dde-1.png');
+    background-size: cover;
+    background-position: center 52%;
+    background-repeat: no-repeat;
+    z-index: -2;
+    animation: heroKenBurns 40s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes heroKenBurns {
+    0%   { transform: scale(1.02) translateY(0); }
+    100% { transform: scale(1.12) translateY(-1%); }
+  }
+  /* overlay · darken image + navy vignette + subtle grid */
+  .hero::after {
+    content: '';
     position: absolute; inset: 0;
-    background-image:
-      repeating-linear-gradient(90deg, transparent 0 100px, rgba(201,169,97,0.04) 100px 101px),
-      repeating-linear-gradient(0deg, transparent 0 100px, rgba(201,169,97,0.04) 100px 101px);
+    background:
+      linear-gradient(180deg,
+        rgba(6,13,31,0.80) 0%,
+        rgba(10,24,56,0.48) 32%,
+        rgba(10,24,56,0.42) 60%,
+        rgba(6,13,31,0.95) 100%),
+      radial-gradient(ellipse at center, transparent 20%, rgba(6,13,31,0.4) 80%),
+      repeating-linear-gradient(90deg, transparent 0 100px, rgba(201,169,97,0.03) 100px 101px),
+      repeating-linear-gradient(0deg, transparent 0 100px, rgba(201,169,97,0.03) 100px 101px);
+    z-index: -1;
     pointer-events: none;
   }
   .hero .crest {
